@@ -10,5 +10,5 @@ public class Cranachan extends ResourceConfig
 	public Cranachan()
 	{
 		packages("jhi.cranachan");
-    }
+	}
 }

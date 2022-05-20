@@ -8,9 +8,6 @@
 	<property name="src" location="src"/>
 	<property name="tmp" location="tmp"/>
 
-	<target name="init">
-		<mkdir dir="${cls}"/>
-	</target>
 
 	<!-- Development classpath -->
 	<path id="project.classpath">
@@ -21,12 +18,12 @@
 
 	<!-- Runtime classpath (manifest formatted) -->
 	<manifestclasspath property="jar.classpath" jarfile="${jar}">
-        <classpath>
-        	<fileset dir="${lib}"/>
-        </classpath>
-    </manifestclasspath>
+		<classpath>
+			<fileset dir="${lib}"/>
+		</classpath>
+	</manifestclasspath>
 
-	<target name="compile" depends="init">
+	<target name="compile">
 		<javac srcdir="${src}" destdir="${cls}" source="11" target="11" debug="true" includeantruntime="false">
 			<classpath refid="project.classpath"/>
 		</javac>
