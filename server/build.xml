@@ -7,6 +7,7 @@
 	<property name="jar" location="${lib}/cranachan.jar"/>
 	<property name="src" location="src"/>
 	<property name="tmp" location="tmp"/>
+	<property name="web" location="web"/>
 
 
 	<!-- Development classpath -->
@@ -45,6 +46,11 @@
 	</target>
 
 	<target name="war" depends="jar">
+		<filter filtersfile="build.properties"/>
+		<copy file="${web}/META-INF/context.xml.template"
+			tofile="${web}/META-INF/context.xml"
+			overwrite="true" filtering="true"/>
+
 		<copy todir="${tmp}" flatten="true">
 			<fileset dir="${lib}">
 				<exclude name="**/lib-devel/**"/>
