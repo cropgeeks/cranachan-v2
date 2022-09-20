@@ -7,8 +7,6 @@ import java.util.*;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 
-import com.google.gson.*;
-
 import jhi.cranachan.data.*;
 
 @Path("/chromosomes")
