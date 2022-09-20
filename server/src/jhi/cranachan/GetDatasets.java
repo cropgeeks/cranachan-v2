@@ -14,7 +14,8 @@ import jhi.cranachan.data.*;
 @Path("/datasets")
 public class GetDatasets
 {
-	private static final String ALL_DATASETS = "SELECT * FROM datasets";
+	private static final String ALL_DATASETS = "SELECT * FROM datasets;";
+	private static final String DATASET_BY_ID = "SELECT * FROM datasets WHERE id = ?;";
 
 	public GetDatasets()
 	{
@@ -44,6 +45,28 @@ public class GetDatasets
 		}
 
 		return datasets;
+	}
+
+	@GET
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Dataset getDataset(@Context ServletContext context, @PathParam("id") String id)
+	{
+		DatabaseUtils.init(context);
+
+		try (Connection con = DatabaseUtils.getConnection();
+			PreparedStatement stmt = DatabaseUtils.createWithId(con, DATASET_BY_ID, id);
+			ResultSet resultSet = stmt.executeQuery())
+		{
+			if (resultSet.next())
+				return getDataset(resultSet);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 
 	private Dataset getDataset(ResultSet resultSet)
