@@ -1,6 +1,8 @@
 package jhi.cranachan.data;
 
-import java.sql.*;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class Dataset
 {
@@ -9,13 +11,10 @@ public class Dataset
 	private String name;
 	private String version;
 	private String filepath;
-	private int refSeqSetId;
-	private DatasetDescription description;
-	private Date createdOn;
-	private Date updatedOn;
+	private int refseqSetId;
+	private DatasetDescription description;	
 
-	public Dataset()
-	{
+	public Dataset() {
 	}
 
 	public int getId()
@@ -48,27 +47,22 @@ public class Dataset
 	public void setFilepath(String filepath)
 		{ this.filepath = filepath; }
 
-	public int getRefSeqSetId()
-		{ return refSeqSetId; }
+	public int getRefseqSetId()
+		{ return refseqSetId; }
 
-	public void setRefSeqSetId(int refSeqSetId)
-		{ this.refSeqSetId = refSeqSetId; }
+	public void setRefSeqSetId(int refseqSetId)
+		{ this.refseqSetId = refseqSetId; }
 
 	public DatasetDescription getDescription()
 		{ return description; }
 
-	public void setDescription(DatasetDescription description)
-		{ this.description = description; }
-
-	public Date getCreatedOn()
-		{ return createdOn; }
-
-	public void setCreatedOn(Date createdOn)
-		{ this.createdOn = createdOn; }
-
-	public Date getUpdatedOn()
-		{ return updatedOn; }
-
-	public void setUpdatedOn(Date updatedOn)
-		{ this.updatedOn = updatedOn; }
+	public void setDescription(String descString) { 
+		if (descString != null)
+		{
+			GsonBuilder builder = new GsonBuilder();
+			builder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
+			Gson gson = builder.create();
+			description = gson.fromJson(descString, DatasetDescription.class);
+		} 
+	}
 }

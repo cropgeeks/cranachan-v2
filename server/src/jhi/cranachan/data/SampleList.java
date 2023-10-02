@@ -1,17 +1,12 @@
 package jhi.cranachan.data;
 
-import java.sql.*;
-
-public class SampleSet
+public class SampleList
 {
 	private int id;
 	private String name;
-	private Date createdOn;
-	private Date updatedOn;
 	private String description;
 
-	public SampleSet()
-	{
+	public SampleList() {
 	}
 
 	public int getId()
@@ -25,18 +20,6 @@ public class SampleSet
 
 	public void setName(String name)
 		{ this.name = name; }
-
-	public Date getCreatedOn()
-		{ return createdOn; }
-
-	public void setCreatedOn(Date createdOn)
-		{ this.createdOn = createdOn; }
-
-	public Date getUpdatedOn()
-		{ return updatedOn; }
-
-	public void setUpdatedOn(Date updatedOn)
-		{ this.updatedOn = updatedOn; }
 
 	public String getDescription()
 		{ return description; }

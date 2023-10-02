@@ -41,4 +41,32 @@ public class DatabaseUtils
 
 		return statement;
 	}
+
+	public static PreparedStatement createPreparedStatement(Connection con, String query, Object... values)
+			throws SQLException
+	{
+		PreparedStatement stmt = con.prepareStatement(query);
+
+		if(values != null)
+		{
+			int i = 1;
+			for (Object value : values)
+			{
+				stmt.setString(i++, value.toString());
+			}
+		}
+
+		return stmt;
+	}
+
+	public static PreparedStatement createWithTwoIds(Connection con, String query, String id1, String id2)
+		throws SQLException
+	{
+		// Prepare statement with ID
+		PreparedStatement statement = con.prepareStatement(query);
+		statement.setString(1, id1);
+		statement.setString(2, id2);
+
+		return statement;
+	}
 }
