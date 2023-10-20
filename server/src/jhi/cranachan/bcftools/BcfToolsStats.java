@@ -46,15 +46,7 @@ public class BcfToolsStats
 		}
 
 		ProcessBuilder pb = new ProcessBuilder(args);
-
-		System.out.println();
-		for (String command: pb.command())
-			System.out.print(command + " ");
-		System.out.println();
-
-		for (String command: pb.command())
-			LOG.log(Level.INFO, command);
-
+		
 		pb.directory(new File(tmpDir));
 		pb.redirectErrorStream(true);
 

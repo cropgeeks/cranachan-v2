@@ -13,7 +13,7 @@ import jhi.cranachan.data.RefseqSet;
 
 public class RefseqSetDAO {
   private static final String ALL_REFSEQSETS = "SELECT * FROM refseqsets";
-  private static final String REFSEQSET_BY_ID = "SELECT * FROM refseqset WHERE id = ?";
+  private static final String REFSEQSET_BY_ID = "SELECT * FROM refseqsets WHERE id = ?";
 
   private ServletContext context;
   ArrayList<RefseqSet> refseqSets = new ArrayList<RefseqSet>();
@@ -42,16 +42,16 @@ public class RefseqSetDAO {
     return refseqSets;
   }
 
-  public ArrayList<RefseqSet> getRefseqByID(int id) {
+  public RefseqSet getRefseqByID(int id) {
     DatabaseUtils.init(context);
+    RefseqSet refseqSet = new RefseqSet();
 
     try (Connection con = DatabaseUtils.getConnection();
-			PreparedStatement stmt = DatabaseUtils.createPreparedStatement(con, REFSEQSET_BY_ID, id);
+			PreparedStatement stmt = DatabaseUtils.createPreparedStatement(con, REFSEQSET_BY_ID, Integer.toString(id));
 			ResultSet resultSet = stmt.executeQuery()) {
 			
         while (resultSet.next()) {
-          RefseqSet refseqSet = setRefseqSet(resultSet);          
-          refseqSets.add(refseqSet);
+          refseqSet = setRefseqSet(resultSet);          
 			  }
 		  }
 
@@ -59,7 +59,7 @@ public class RefseqSetDAO {
 			e.printStackTrace();
 		}
        
-    return refseqSets;
+    return refseqSet;
   }
 
   private RefseqSet setRefseqSet(ResultSet resultSet) throws SQLException {

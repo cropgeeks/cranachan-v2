@@ -11,13 +11,15 @@
           <b-th>End</b-th>
           <b-th># SNPs</b-th>
           <b-th>VCF</b-th>
+          <b-th>Flapjack</b-th>
         </b-tr>
-        <b-tr v-for="result in this.jsonData" v-bind:key="result.chromosome">
+        <b-tr v-for="result in this.jsonData" v-bind:key="result.vcfName">
           <b-td>{{result.chromosome}}</b-td>
           <b-td>{{result.start.toLocaleString()}}</b-td>
           <b-td>{{result.end.toLocaleString()}}</b-td>
           <b-td>{{result.noSNPs.toLocaleString()}}</b-td>
           <b-td><a :href="result.vcfPath">{{result.vcfName}}</a></b-td>
+          <b-td><a :href="result.FJPath">{{result.FJName}}</a></b-td>
         </b-tr>
       </table>
     </b-row>

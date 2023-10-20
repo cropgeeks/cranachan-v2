@@ -8,12 +8,18 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import java.util.logging.Logger;
+
+import org.jfree.util.Log;
 
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
-
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 
 import jhi.cranachan.bcftools.*;
 import jhi.cranachan.data.*;
@@ -27,9 +33,16 @@ import jhi.flapjack.io.cmd.*;
 public class SubmitPosition
 {
   private Refseq chromosome;
-  private int start;
-  private int end;
+	
 	private SampleWorker sampleWorker;
+	private RefseqDAO refseqDAO;
+	private DatasetDAO datasetDAO;
+	private Dataset dataset;
+
+
+
+  private long start;
+  private long end;
   private int quality;
   private int sampleSet;
 	private int datasetID;
@@ -38,50 +51,103 @@ public class SubmitPosition
 	private File vcfFile;
 	private File statsFile;
 	private String name;
-	private String flapJackFileName = "";
-	private File flapJackFile = null;
+	private String flapjackFileName = "";
+	private File flapjackFile = null;
 	private List<Result> results = new ArrayList<Result>();
 	private Result result = new Result();
+	Gson gson = new Gson();
+	Logger LOG = Logger.getLogger(SubmitPosition.class.getName());
   
 	private File outputDir;
+	private File completeFile;
 
 	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	public String submitPosition(@Context ServletContext context, @QueryParam("chromosome") int chromosomeID, @QueryParam("start") long start, @QueryParam("end") long end, @QueryParam("quality") int quality, @QueryParam("sample") int sampleSet, @QueryParam("datasetID") int datasetID) {
+		
+		refseqDAO = new RefseqDAO(context);
+		
+		this.chromosome = refseqDAO.getRefseqByID(chromosomeID);
+		this.start = start;
+		this.end = end;
+		this.quality = quality;
+		this.sampleSet = sampleSet;
+		this.datasetID = datasetID; 
+
+		long currentTime = System.currentTimeMillis();
+		outputDir = new File(tmp + "/" + currentTime);
+		outputDir.mkdir();
+		completeFile = new File(outputDir, "complete.txt");
+		new Thread(new Runnable() {
+			public void run() {
+				runSearch(context);
+			}
+		}).start();
+
+		return (completeFile.getAbsolutePath());
+	}
+
+	@Path("/checkPosition")
+	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Result> submitPosition(@Context ServletContext context, @QueryParam("chromosome") int chromosomeID, @QueryParam("start") int start, @QueryParam("end") int end, @QueryParam("quality") int quality, @QueryParam("sample") int sampleSet, @QueryParam("datasetID") int datasetID) {
-		RefseqDAO refseqDAO = new RefseqDAO(context);
+	public Boolean checkPosition(@Context ServletContext context, @QueryParam("path") String path) {
+		completeFile = new File(path);
+		try {
+			return(completeFile.exists());
+		}
+		catch (Exception e) { 
+			Log.info("File Check Error"); 
+			return false; 
+		}
+	}
 
-    this.chromosome = refseqDAO.getRefseqByID(chromosomeID);
-    this.start = start;
-    this.end = end;
-    this.quality = quality;
-    this.sampleSet = sampleSet;
-		this.datasetID = datasetID;    
-    
+	@Path("/getResults")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Result> getResults(@Context ServletContext context, @QueryParam("path") String path) {
+		String fileContents = "";
+		try (Scanner reader = new Scanner(new File(path))){
+			while(reader.hasNext()) {
+				fileContents += reader.next();
+			}
+
+			Type listOfResults = new TypeToken<ArrayList<Result>>() {}.getType();
+
+    	Gson gson = new Gson();
+    	results = gson.fromJson(fileContents, listOfResults);
+		}
+		catch (Exception e) {}
+
+		return results;
+	}
+
+	private void runSearch(ServletContext context) {
+		datasetDAO = new DatasetDAO(context);
 		sampleWorker = new SampleWorker(context, sampleSet, datasetID);
-
-		DatasetDAO datasetDAO = new DatasetDAO(context);
-		Dataset dataset = datasetDAO.getDatasetByID(datasetID);
+		dataset = datasetDAO.getDatasetByID(datasetID);
 		datasetPath = dataset.getFilepath();
 
 		runBcfToolsView();
 		runBcfToolsStats();
 
-	/*	Error seems to be caused by FJ jar not being found but is in war file?
+		//	Error seems to be caused by FJ jar not being found but is in war file?
 		if(getSnpCount() >0) {
 			result.setRunning(true);
 			getFJFiles(context);
 			result.setRunning(false);
 		}
-		*/
+			
 		results.add(result);
-		return results;
+
+		try (PrintWriter writer = new PrintWriter(new FileWriter(completeFile))){
+			LOG.info("Writing results");
+			writer.write(gson.toJson(results));			
+		}
+		catch (Exception e) { LOG.info("ERROR: " + e.getMessage());}
 	}
 
 	private void runBcfToolsView() {
 		name = chromosome.getName() + "-" + start + "-" + end;
-		long currentTime = System.currentTimeMillis();
-		outputDir = new File(tmp + "/" + currentTime);
-		outputDir.mkdir();
 		vcfFile = new File(outputDir, name + ".vcf");
 		try {
 			result.setRunning(true);
@@ -179,6 +245,7 @@ public class SubmitPosition
 	}
 
 	private void getFJFiles(ServletContext context) {
+		LOG.info("FJ File Creation Started");
 		GeneDAO geneDAO = new GeneDAO(context);
 		String mapFileName = changeFileExtension(vcfFile.getName(), ".map");
 		File mapFile = new File(outputDir, mapFileName);
@@ -195,13 +262,13 @@ public class SubmitPosition
 		List<Gene> genes = geneDAO.getGenesByRefseq(chromosome.getId(), start, end);
 		writeQtlFile(qtlFile, genes);
 
-		flapJackFileName = changeFileExtension(vcfFile.getName(), ".flapjack");
-		flapJackFile = new File(outputDir, flapJackFileName);
+		flapjackFileName = changeFileExtension(vcfFile.getName(), ".flapjack");
+		flapjackFile = new File(outputDir, flapjackFileName);
 
-		String flapjackPath = flapJackFile.getAbsolutePath();
+		String flapjackPath = context.getRealPath("/WEB-INF/lib/flapjack.jar");
 
 		try {
-			FlapjackCreateProject createProject = new FlapjackCreateProject(genotypeFile, flapJackFile)
+			FlapjackCreateProject createProject = new FlapjackCreateProject(genotypeFile, flapjackFile)
 				.withMapFile(mapFile)
 				.withQtlFile(qtlFile);
 			createProject.run(flapjackPath, outputDir.getAbsolutePath());
@@ -210,7 +277,7 @@ public class SubmitPosition
 			e.printStackTrace();
 		}
 
-		result.setFJName(flapJackFileName);
+		result.setFJName(flapjackFileName);
 		result.setFJPath(flapjackPath);
 	}
 

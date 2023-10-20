@@ -8,6 +8,7 @@ public class Gene
 	private int geneSetID;
 	private long start;
 	private long end;
+	private int refseq;
 
 	public Gene() {
 	}
@@ -54,5 +55,13 @@ public class Gene
 
 	public void setEnd(long end) {
 		this.end = end;
+	}
+
+	public int getRefseq() {
+		return refseq;
+	}
+
+	public void setRefseq(int refseq) {
+		this.refseq = refseq;
 	}
 }

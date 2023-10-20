@@ -3,13 +3,14 @@ package jhi.cranachan.data;
 public class Result {
   boolean isRunning;
   String chromosome;
-  int start;
-  int end;
+  long start;
+  long end;
   long noSNPs;
   String vcfPath;
   String vcfName;
   String FJPath;
   String FJName;
+  String gene;
 
   public Result() {
   }
@@ -26,16 +27,16 @@ public class Result {
   public void setChromosome(String chromosome) {
     this.chromosome = chromosome;
   }
-  public int getStart() {
+  public long getStart() {
     return start;
   }
-  public void setStart(int start) {
+  public void setStart(long start) {
     this.start = start;
   }
-  public int getEnd() {
+  public long getEnd() {
     return end;
   }
-  public void setEnd(int end) {
+  public void setEnd(long end) {
     this.end = end;
   }
   public long getNoSNPs() {
@@ -71,6 +72,13 @@ public class Result {
 
   public void setFJName(String fJName) {
     FJName = fJName;
+  }
+
+  public String getGene() {
+    return gene;
+  }
+  public void setGene(String gene) {
+    this.gene = gene;
   }
   
 

@@ -57,6 +57,7 @@ export default {
   data() {
     return {
       chromosomeList: null,
+      completeFile: null,
       datasetID: null,
       selectedChromosome: {},
       start: 1,
@@ -109,22 +110,20 @@ export default {
       },
 
   methods: {
-    /*checkProgress: function() {
-      axios.get("/submitPosition/" + this.id,
+    checkProgress: function() {
+      axios.get("/submitPosition/checkPosition/",
       {
+        params: {
+          path: this.completeFile,
+        },
         headers: {"Content-Type": "application/json"}
       }).then(
         function(response) {
-          this.jsonData = response.data;
-          
-          if (this.jsonData.isRunning == false)
-          {
+          if (response.data == true) {
             this.jobRunning = false;
             clearInterval(this.interval);
-            //add router push here to send to results page with folder path from json
-            this.$router.push({ name: 'Results', params: { jsonData: response.data }})
+            this.getResults();
           }
-
           else {
             this.jobRunning = true;
           }
@@ -134,7 +133,27 @@ export default {
           clearInterval(this.interval);
           console.log(error);
         });
-    },*/
+    },
+
+    getResults: function() {
+      axios.get("/submitPosition/getResults/",
+      {
+        params: {
+          path: this.completeFile,
+        },
+        headers: {"Content-Type": "application/json"}
+      }).then(
+        function(response) {
+          this.jsonData = response.data;
+          //add router push here to send to results page with folder path from json
+          this.$router.push({ name: 'Results', params: { jsonData: response.data }})
+        }.bind(this)
+      )
+      .catch(error => {
+        clearInterval(this.interval);
+        console.log(error);
+      });
+    },
 
     onSubmit: function() {
       event.preventDefault();
@@ -151,10 +170,9 @@ export default {
         headers: {"Content-Type":"application/json"}
       }).then(
           function(response) {
-            this.jsonData = response.data;
-            this.$router.push({ name: 'Results', params: { jsonData: this.jsonData } })
-           // this.checkProgress();
-            //this.interval = setInterval(this.checkProgress, 5000);
+            this.completeFile = response.data;
+            this.checkProgress();
+            this.interval = setInterval(this.checkProgress, 5000);
           }.bind(this)
         )
         .catch(error => {

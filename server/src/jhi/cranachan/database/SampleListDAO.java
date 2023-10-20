@@ -13,7 +13,7 @@ import jhi.cranachan.data.SampleList;
 
 public class SampleListDAO {
   private static final String ALL_SAMPLELISTS = "SELECT * FROM sample_lists";
-  private static final String SAMPLELIST_BY_ID = "SELECT * FROM sample_listss WHERE id = ?";
+  private static final String SAMPLELIST_BY_ID = "SELECT * FROM sample_lists WHERE id = ?";
 
   private ServletContext context;
   ArrayList<SampleList> sampleLists = new ArrayList<SampleList>();
@@ -47,7 +47,7 @@ public class SampleListDAO {
     SampleList sampleList = new SampleList();
 
     try (Connection con = DatabaseUtils.getConnection();
-			PreparedStatement stmt = DatabaseUtils.createPreparedStatement(con, SAMPLELIST_BY_ID, id);
+			PreparedStatement stmt = DatabaseUtils.createPreparedStatement(con, SAMPLELIST_BY_ID, Integer.toString(id));
 			ResultSet resultSet = stmt.executeQuery()) {
 			
         while (resultSet.next()) {

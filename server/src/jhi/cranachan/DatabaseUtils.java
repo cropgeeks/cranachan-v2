@@ -1,6 +1,8 @@
 package jhi.cranachan;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import jakarta.servlet.*;
 
@@ -42,19 +44,28 @@ public class DatabaseUtils
 		return statement;
 	}
 
-	public static PreparedStatement createPreparedStatement(Connection con, String query, Object... values)
+	public static PreparedStatement createPreparedStatement(Connection con, String query, ArrayList<String> values)
 			throws SQLException
 	{
 		PreparedStatement stmt = con.prepareStatement(query);
-
+		
 		if(values != null)
 		{
 			int i = 1;
-			for (Object value : values)
+			for (String value : values)
 			{
 				stmt.setString(i++, value.toString());
 			}
 		}
+
+		return stmt;
+	}
+
+	public static PreparedStatement createPreparedStatement(Connection con, String query, String value)
+		throws SQLException {
+		PreparedStatement stmt = con.prepareStatement(query);
+		
+		stmt.setString(1, value);
 
 		return stmt;
 	}

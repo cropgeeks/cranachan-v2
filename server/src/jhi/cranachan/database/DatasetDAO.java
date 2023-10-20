@@ -48,7 +48,7 @@ public class DatasetDAO {
     Dataset dataset = new Dataset();
 
     try (Connection con = DatabaseUtils.getConnection();
-			PreparedStatement stmt = DatabaseUtils.createPreparedStatement(con, DATASET_BY_ID, id);
+			PreparedStatement stmt = DatabaseUtils.createPreparedStatement(con, DATASET_BY_ID, Integer.toString(id));
 			ResultSet resultSet = stmt.executeQuery()) {
 			
         while (resultSet.next()) {
@@ -67,7 +67,7 @@ public class DatasetDAO {
     DatabaseUtils.init(context);
 
     try (Connection con = DatabaseUtils.getConnection();
-			PreparedStatement stmt = DatabaseUtils.createPreparedStatement(con, DATASETS_BY_REFSEQSET, refseqSetID);
+			PreparedStatement stmt = DatabaseUtils.createPreparedStatement(con, DATASETS_BY_REFSEQSET, Integer.toString(refseqSetID));
 			ResultSet resultSet = stmt.executeQuery()) {
 			
         while (resultSet.next()) {

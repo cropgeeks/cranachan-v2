@@ -76,7 +76,7 @@ public class BcfToolsView
 		throws Exception
 	{
 		List<String> args = new ArrayList<>();
-
+		
 		args.add("bcftools");
 		args.add("view");
 		if (types != null)
@@ -95,14 +95,6 @@ public class BcfToolsView
 			args.add(bcfFile.getPath());
 
 		ProcessBuilder pb = new ProcessBuilder(args);
-
-		System.out.println();
-		for (String command: pb.command())
-			System.out.print(command + " ");
-		System.out.println();
-
-		for (String command: pb.command())
-			LOG.log(Level.INFO, command);
 
 		pb.directory(new File(tmpDir));
 		pb.redirectErrorStream(true);

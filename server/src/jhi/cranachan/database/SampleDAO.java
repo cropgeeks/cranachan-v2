@@ -50,7 +50,7 @@ public class SampleDAO {
     Sample sample = new Sample();
 
     try (Connection con = DatabaseUtils.getConnection();
-			PreparedStatement stmt = DatabaseUtils.createPreparedStatement(con, SAMPLE_BY_ID, id);
+			PreparedStatement stmt = DatabaseUtils.createPreparedStatement(con, SAMPLE_BY_ID, Integer.toString(id));
 			ResultSet resultSet = stmt.executeQuery()) {
 			
         while (resultSet.next()) {
@@ -69,7 +69,7 @@ public class SampleDAO {
     DatabaseUtils.init(context);
 
     try (Connection con = DatabaseUtils.getConnection();
-			PreparedStatement stmt = DatabaseUtils.createPreparedStatement(con, SAMPLE_BY_SAMPLELIST, sampleListID);
+			PreparedStatement stmt = DatabaseUtils.createPreparedStatement(con, SAMPLE_BY_SAMPLELIST, Integer.toString(sampleListID));
 			ResultSet resultSet = stmt.executeQuery()) {
 			
         while (resultSet.next()) {
@@ -89,7 +89,7 @@ public class SampleDAO {
     DatabaseUtils.init(context);
 
     try (Connection con = DatabaseUtils.getConnection();
-			PreparedStatement stmt = DatabaseUtils.createPreparedStatement(con, SAMPLE_BY_SAMPLELIST, sampleListID);
+			PreparedStatement stmt = DatabaseUtils.createPreparedStatement(con, SAMPLE_BY_SAMPLELIST, Integer.toString(sampleListID));
 			ResultSet resultSet = stmt.executeQuery()) {
 			
         while (resultSet.next()) {
@@ -110,7 +110,7 @@ public class SampleDAO {
     DatabaseUtils.init(context);
 
     try (Connection con = DatabaseUtils.getConnection();
-			PreparedStatement stmt = DatabaseUtils.createPreparedStatement(con, SAMPLE_BY_DATASET, datasetID);
+			PreparedStatement stmt = DatabaseUtils.createPreparedStatement(con, SAMPLE_BY_DATASET, Integer.toString(datasetID));
 			ResultSet resultSet = stmt.executeQuery()) {
 			
         while (resultSet.next()) {
@@ -129,7 +129,7 @@ public class SampleDAO {
     DatabaseUtils.init(context);
 
     try (Connection con = DatabaseUtils.getConnection();
-			PreparedStatement stmt = DatabaseUtils.createPreparedStatement(con, SAMPLE_BY_DATASET, datasetID);
+			PreparedStatement stmt = DatabaseUtils.createPreparedStatement(con, SAMPLE_BY_DATASET, Integer.toString(datasetID));
 			ResultSet resultSet = stmt.executeQuery()) {
 			
         while (resultSet.next()) {
