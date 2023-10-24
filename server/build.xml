@@ -58,6 +58,7 @@
 		</copy>
 
 		<war destfile="${tomcat.manager.app}.war" update="false">
+			<fileset dir="${project.dist}"/>
 			<webinf dir="web/WEB-INF"/>
 			<metainf dir="web/META-INF"/>
 			<lib dir="${tmp}"/>
