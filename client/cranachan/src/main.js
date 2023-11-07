@@ -13,7 +13,7 @@ let baseUrl = process.env.VUE_APP_BASE_URL
 console.log(baseUrl)
 Axios.defaults.baseURL = ("https://ics.hutton.ac.uk/cranachan2/api/")
 
-console.log("Axios URL " + axiosDefaults.baseURL)
+console.log("Axios URL " + Axios.defaults.baseURL)
 Vue.config.productionTip = false
 
 new Vue({
